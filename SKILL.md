@@ -1,6 +1,6 @@
 ---
 name: doc-writer
-version: v0.8
+version: v0.8.0
 description: |
   多智能体协同学术/商业文档写作技能，支持单轨/多轨并行/扩轨三种模式，可多支团队同时走不同方向并评选最优解。
   支持 LaTeX 和 Word 双格式输出。
@@ -31,6 +31,7 @@ description: |
   - 表格样式增强：三线表/斑马纹表格/跨列跨行单元格
   - 多格式输出：LaTeX (pylatex)、Word (python-docx)、编译说明
   - 自动编译：XeLaTeX → BibTeX → XeLaTeX → XeLaTeX
+kind: skill
 ---
 
 # 文档写作助手 (doc-writer)
@@ -127,6 +128,7 @@ Final: 合并各章节，输出完整文档
 | **格式优化Agent** | LaTeX pylatex 脚本 / Word python-docx 脚本 | 格式化的 .tex / .docx 文件 | 输出 Markdown + 转换命令 |
 | **审查Agent** | 逻辑完整性 + 格式规范性 + 内容质量 | 审查报告 + 修改建议 | 跳过审查，用户自行检查 |
 
+kind: skill
 ---
 
 ## 第一阶段：模板解析与需求确认
@@ -215,6 +217,7 @@ Final: 合并各章节，输出完整文档
 - 文档类 → ctexart / IEEEtran
 ```
 
+kind: skill
 ---
 
 ## 第二阶段：规划 Agent
@@ -291,6 +294,7 @@ Final: 合并各章节，输出完整文档
 以 JSON 格式返回，结构参见输出契约。
 ```
 
+kind: skill
 ---
 
 ## 第三阶段：写作 Agent
@@ -344,6 +348,7 @@ Final: 合并各章节，输出完整文档
 文档末尾添加 `{{END_OF_DRAFT}}` 标记。
 ```
 
+kind: skill
 ---
 
 ## 第四阶段：内容优化 Agent
@@ -396,6 +401,7 @@ Final: 合并各章节，输出完整文档
 直接输出优化后的完整 Markdown 文档，末尾添加 `{{END_OF_OPTIMIZED}}` 标记。
 ```
 
+kind: skill
 ---
 
 ## 第五阶段：图表 Agent
@@ -929,6 +935,7 @@ def insert_chart_[编号](doc):
 完成后列出所有生成的图表代码及插入位置。
 ```
 
+kind: skill
 ---
 
 ## 第六阶段：格式优化 Agent
@@ -1669,6 +1676,7 @@ xelatex document.tex
 
 ```
 
+kind: skill
 ---
 
 ## 第七阶段：审查 Agent
@@ -1778,6 +1786,7 @@ xelatex document.tex
 如果需要修改，列出所有问题及修改建议。
 ```
 
+kind: skill
 ---
 
 ## F014: 多格式输出
@@ -1858,6 +1867,7 @@ xelatex document.tex
 - 题注格式：图 1. 描述 / 表 1. 描述
 ````
 
+kind: skill
 ---
 
 ## 错误处理与降级策略
@@ -1908,6 +1918,7 @@ xelatex document.tex
 - /review：单独执行审查步骤
 ```
 
+kind: skill
 ---
 
 ## 交互流程指南
@@ -1981,6 +1992,7 @@ Skill 判断触发
 或通过 /modify 命令进行局部修改。
 ```
 
+kind: skill
 ---
 
 ## Python 依赖说明
@@ -2022,6 +2034,7 @@ Skill 判断触发
 - 生成图表数据图片
 - 为 pgfplots 提供数据支持
 
+kind: skill
 ---
 
 ## 附录：完整格式规范速查表
@@ -2335,6 +2348,7 @@ xelatex document.tex
 
 当目录条目略超一页时，优先使用第 1 步和第 2 步压缩内容。
 
+kind: skill
 ---
 
 ## 第八阶段：质量自检循环（结果交付前必须执行）
