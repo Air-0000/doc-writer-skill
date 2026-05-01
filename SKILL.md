@@ -1,6 +1,6 @@
 ---
 name: doc-writer
-version: v0.6
+version: v0.8
 description: |
   多智能体协同学术/商业文档写作技能，支持单轨/多轨并行/扩轨三种模式，可多支团队同时走不同方向并评选最优解。
   支持 LaTeX 和 Word 双格式输出。
@@ -9,11 +9,13 @@ description: |
   - 用户要求撰写、修改、润色学术论文（期刊论文、学位论文、会议论文）
   - 用户要求撰写项目申报书/项目介绍书/可行性报告
   - 用户要求撰写科技查新报告
+  - 用户要求撰写商业计划书（BP Executive Summary）
+  - 用户要求撰写技术方案文档（系统设计文档）
   - 用户要求生成 LaTeX 或 Word 格式的正式长文档
   - 用户上传模板文件（.tex/.cls/.sty/.docx/.dotx）并要求基于模板写作
   - 用户要求将 Markdown 内容转换为 LaTeX 或 Word 格式
   - 用户询问某种文档类型的标准格式规范
-  - 用户要求绘制流程图、折线图、柱状图并插入文档
+  - 用户要求绘制流程图、折线图、柱状图、饼图、甘特图并插入文档
   - 用户要求多角度/多方案并行写作（如同一题目写多个不同版本）
 
   不触发场景：
@@ -24,8 +26,9 @@ description: |
   核心能力：
   - 六 Agent 流水线：规划 → 写作 → 内容优化（Doubao-seed-2.0-pro）→ 图表 → 格式优化 → 审查
   - 三种写作模式：单轨（默认）/ 多轨并行（多方案对比评选）/ 扩轨（多 Agent 并行）
-  - 四种内置模板：中文学术论文、IEEE英文期刊、项目申报书、查新报告
-  - 图表生成：LaTeX TikZ/pgfplots 流程图/折线图/柱状图、Word 原生图表
+  - 六种内置模板：中文学术论文、IEEE英文期刊、项目申报书、查新报告、商业计划书、技术方案文档
+  - 图表扩展支持：流程图/折线图/柱状图/饼图/甘特图/Swimlane图、LaTeX TikZ/pgfplots、Word 原生图表
+  - 表格样式增强：三线表/斑马纹表格/跨列跨行单元格
   - 多格式输出：LaTeX (pylatex)、Word (python-docx)、编译说明
   - 自动编译：XeLaTeX → BibTeX → XeLaTeX → XeLaTeX
 ---
@@ -189,6 +192,8 @@ Final: 合并各章节，输出完整文档
    □ 英文期刊论文（IEEEtran）
    □ 项目申报书
    □ 科技查新报告
+   □ 商业计划书（BP Executive Summary）
+   □ 技术方案文档（系统设计文档）
    □ 其他：__________
 
 2. 目标格式：
@@ -399,7 +404,7 @@ Final: 合并各章节，输出完整文档
 
 **输入契约：**
 - 内容优化 Agent 输出的 Markdown 文档
-- 图表类型需求（流程图/折线图/柱状图/表格/图片）
+- 图表类型需求（流程图/折线图/柱状图/饼图/甘特图/Swimlane图/表格/图片）
 - 目标格式（LaTeX/Word）
 
 **输出契约：**
@@ -597,6 +602,152 @@ includegraphics[width=0.8\textwidth]{image.pdf}
 \end{subcaption}
 ```
 
+#### F009: LaTeX pgf-pie 饼图
+
+```latex
+% 饼图模板 - 可直接使用
+\usepackage{pgf-pie}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}
+\pie[
+  rotate=180,
+  color={blue!60, red!60, green!60, orange!60, purple!60},
+  text=legend,
+  explode=0.1,
+  style={font=\footnotesize},
+]{
+  35/产品A,
+  25/产品B,
+  20/产品C,
+  12/产品D,
+  8/其他
+}
+\end{tikzpicture}
+\caption{饼图题注}\label{fig:pie}
+\end{figure}
+```
+
+#### F010: LaTeX pgfgantt 甘特图
+
+```latex
+% 甘特图模板 - 可直接使用
+\usepackage{pgfgantt}
+\usepackage{xcolor}
+
+\begin{figure}[htbp]
+\centering
+\begin{ganttchart}[
+  hgrid,
+  vgrid,
+  time slot format=isodate,
+  group incomplete node=black,
+  milestone incomplete node=black,
+]{2024-01-01}{2024-06-30}
+  \gantttitlecalendar{year, month=name} \\
+  \ganttgroup{项目整体}{2024-01-01}{2024-06-30} \\
+  \ganttbar{阶段一：需求分析}{2024-01-01}{2024-02-15} \\
+  \ganttbar{阶段二：设计开发}{2024-02-16}{2024-05-15} \\
+  \ganttlinkedbar{阶段三：测试验收}{2024-05-16}{2024-06-15} \\
+  \ganttmilestone{项目上线}{2024-06-30}
+\end{ganttchart}
+\caption{甘特图题注}\label{fig:gantt}
+\end{figure}
+```
+
+#### F011: LaTeX Swimlane 跨职能流程图
+
+```latex
+% Swimlane（跨职能流程图）模板 - 可直接使用
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows, positioning, fit}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  lane/.style={rectangle, minimum height=1.5cm, minimum width=14cm, draw=black, fill=none},
+  task/.style={rectangle, rounded corners, minimum width=2.5cm, minimum height=0.8cm, draw=black, fill=white},
+  arrow/.style={thick,->,>=stealth}
+]
+
+% 泳道定义
+\node[lane] (lane1) at (0, 0) {业务部门};
+\node[lane] (lane2) at (0, -1.8) {技术部门};
+\node[lane] (lane3) at (0, -3.6) {运维部门};
+
+% 任务节点
+\node[task] (t1) at (2, 0) {提交需求};
+\node[task] (t2) at (2, -1.8) {技术评估};
+\node[task] (t3) at (6, -1.8) {方案设计};
+\node[task] (t4) at (10, -1.8) {开发实现};
+\node[task] (t5) at (6, -3.6) {部署上线};
+
+% 连接线
+\draw[arrow] (t1) -- (t2);
+\draw[arrow] (t2) -- (t3);
+\draw[arrow] (t3) -- (t4);
+\draw[arrow] (t4) -- ++(0,-1) -| (t5);
+\draw[arrow] (t5) -- ++(2,0) node[anchor=west] {完成};
+
+\end{tikzpicture}
+\caption{Swimlane流程图题注}\label{fig:swimlane}
+\end{figure}
+```
+
+#### F012: LaTeX 斑马纹表格
+
+```latex
+% 斑马纹表格模板 - 可直接使用
+\usepackage[table]{xcolor}
+\usepackage{booktabs}
+
+\rowcolors{1}{gray!10}{white}  % 奇数行灰色，偶数行白色
+
+\begin{table}[htbp]
+\centering
+\caption{斑马纹表格标题}\label{tab:zebra}
+\begin{tabular}{clccc}
+\toprule
+序号 & 项目名称 & 数值1 & 数值2 & 备注 \\
+\midrule
+1    & 项目A    & 85.6  & 92.1  & 优秀   \\
+2    & 项目B    & 78.3  & 86.5  & 良好   \\
+3    & 项目C    & 92.1  & 95.8  & 卓越   \\
+4    & 项目D    & 65.4  & 71.2  & 合格   \\
+5    & 项目E    & 88.7  & 90.3  & 优秀   \\
+\bottomrule
+\end{tabular}
+\end{table}
+```
+
+#### F013: LaTeX 跨列跨行复杂表格
+
+```latex
+% 跨列跨行表格模板 - 可直接使用
+\usepackage{booktabs}
+\usepackage{multirow}
+
+\begin{table}[htbp]
+\centering
+\caption{跨列跨行表格标题}\label{tab:complex}
+\begin{tabular}{cc|ccc|c}
+\toprule
+\multirow{2}{*}{维度} & \multirow{2}{*}{指标} & \multicolumn{3}{c}{测量结果} & \multirow{2}{*}{评价} \\
+\cmidrule{3-5}
+                       &            & 数值1    & 数值2    & 数值3     &            \\
+\midrule
+\cellcolor{blue!20}区域A & 均值       & 85.6    & 92.1    & 88.9     & 优秀       \\
+                        & 标准差     & 3.2     & 2.8     & 4.1      & —         \\
+\cellcolor{green!20}区域B & 均值       & 78.3    & 86.5    & 82.4     & 良好       \\
+                        & 标准差     & 4.1     & 3.5     & 3.8      & —         \\
+\bottomrule
+\end{tabular}
+\end{table}
+```
+
+> **图表模板说明**：以上模板可直接复制使用，数据部分按实际内容替换即可。LaTeX 图表使用 `\usepackage{booktabs}`（三线表）、`\usepackage{pgf-pie}`（饼图）、`\usepackage{pgfgantt}`（甘特图）、`\usepackage{multirow}`（跨行表格）。
+
 #### F006: Word 原生图表（Python 脚本）
 
 ```python
@@ -721,7 +872,7 @@ def add_picture_with_caption(doc, image_path, caption_text, width=Inches(5)):
 ```
 遍历写作输出的 {{FIGURE:N:题注}} 和 {{TABLE:N:标题}} 占位符
     ↓
-识别图表类型（流程图/折线图/柱状图/表格/普通图片）
+识别图表类型（流程图/折线图/柱状图/饼图/甘特图/Swimlane图/表格/普通图片）
     ↓
 生成对应格式的图表代码
     ↓
@@ -746,7 +897,7 @@ def add_picture_with_caption(doc, image_path, caption_text, width=Inches(5)):
 
 对于每个图表占位符，输出：
 
-1. **图表类型判断**：流程图/折线图/柱状图/表格/普通图片
+1. **图表类型判断**：流程图/折线图/柱状图/饼图/甘特图/Swimlane图/表格/普通图片
 2. **数据提取**：从上下文提取图表所需的数据
 3. **代码生成**：根据目标格式生成对应代码
 
