@@ -1,6 +1,6 @@
 ---
 name: doc-writer
-version: v0.8.0
+version: "v0.9.0"
 description: |
   多智能体协同学术/商业文档写作技能，支持单轨/多轨并行/扩轨三种模式，可多支团队同时走不同方向并评选最优解。
   支持 LaTeX 和 Word 双格式输出。
@@ -32,11 +32,189 @@ description: |
   - 多格式输出：LaTeX (pylatex)、Word (python-docx)、编译说明
   - 自动编译：XeLaTeX → BibTeX → XeLaTeX → XeLaTeX
 kind: skill
+model:
+  default: code
+  per_role:
+    planner: doubao-seed-2.0-pro
+    writer: code
+    optimizer: doubao-seed-2.0-pro
+    chart-designer: code
+    formatter: code
+    reviewer: doubao-seed-2.0-pro
 ---
 
 # 文档写作助手 (doc-writer)
 
 多智能体协同流水线，通过六个专业 Agent 协作完成高质量学术/商业文档写作。
+
+## 写作知识库（v0.9 新增）
+
+> 建立持续积累的写作知识库，沉淀领域术语、格式规范、优秀案例，让每次写作都能站在历史积累的基础上。
+
+### 知识库目录结构
+
+```
+references/
+├── terminology/          # 领域术语库
+│   ├── academic.json    # 学术论文术语（中英对照）
+│   ├── business.json     # 商业文档术语
+│   ├── engineering.json  # 工程/技术文档术语
+│   └── custom.json       # 用户自定义术语
+├── format_specs/         # 格式规范库
+│   ├── academic_paper.md
+│   ├── project_proposal.md
+│   ├── novelty_report.md
+│   ├── business_plan.md
+│   └── technical_doc.md
+├── examples/             # 优秀案例库
+│   ├── academic/
+│   ├── project_proposal/
+│   ├── novelty_report/
+│   └── business_plan/
+└── index.md             # 知识库入口
+```
+
+### 术语库使用
+
+**JSON 格式**（`references/terminology/academic.json` 示例）：
+
+```json
+{
+  "transitions": [
+    "首先、其次、最后",
+    "然而、与此同时、值得注意的是",
+    "因此、综上所述、由此可见"
+  ],
+  "academic_vocab": {
+    "观点": ["认为、指出、表明、论证", "本研究"],
+    "分析": ["深入探讨、系统论述、详尽阐述"],
+    "结论": ["由此可知、基于此、研究表明"]
+  },
+  "forbidden": ["从而、所以、然后", "大概、可能、左右"]
+}
+```
+
+**Writer/Optimizer Agent 在写作时应**：
+1. 读取对应领域的 `terminology/*.json`
+2. 优先使用 `academic_vocab` 中的正式表达
+3. 避免使用 `forbidden` 中的口语化词汇
+4. 合理使用 `transitions` 中的过渡词提升流畅度
+
+### 格式规范库
+
+每个格式规范文档（`references/format_specs/*.md`）包含：
+
+```markdown
+# [文档类型] 格式规范
+
+## 结构要求
+- 章节层级、编号规则
+- 字数要求（如申报书一般 8000-15000 字）
+
+## 格式规范
+- 标题层级、字体字号
+- 段落间距、行间距
+- 图表标题位置
+
+## 内容要素
+- 必须包含的章节
+- 每节的写作要点
+
+## 常见错误
+- [错误1] 正确做法：...
+- [错误2] 正确做法：...
+```
+
+### 优秀案例库
+
+每个案例文件（`references/examples/*/*.md`）标注：
+
+```markdown
+---
+source: [来源]
+type: [论文/申报书/查新报告]
+score: [1-5]  # 质量评分
+tags: [关键词, 关键词]
+---
+[正文]
+```
+
+**Reviewer Agent 在审查时应**：参考优秀案例库中的高分案例，指出当前文档与优秀案例的差距。
+
+### 知识库更新机制
+
+1. **每次写作完成后**，Writer/Optimizer 将新发现的优秀表达存入 `references/terminology/custom.json`
+2. **Reviewer 审查时**发现文档质量高，存入 `references/examples/` 对应目录
+3. **用户反馈**指正专业术语时，同步更新 `references/terminology/` 相关文件
+4. **Knowledge Base Agent**（新增，可选角色）在空闲时整理和维护知识库内容
+
+### 知识库 Agent（可选，v0.9 新增）
+
+当用户指定"启动知识库管理"或"整理写作知识库"时，额外激活知识库 Agent：
+
+**职责**：
+- 整理和维护 `references/` 目录下的所有知识库文件
+- 将本次写作中的高频优质表达归档到术语库
+- 将评分≥4的文档存入优秀案例库
+- 清理过期/低质量案例（每季度或积累≥100条时触发）
+
+**触发方式**：
+- 用户明确指定："启动知识库管理"
+- 当 `references/examples/` 积累 ≥20 个文档时自动触发整理
+
+### 模型选择说明（v0.9 新增）
+
+| Agent | 任务特点 | 推荐模型 | 理由 |
+|-------|---------|---------|------|
+| planner | 文档结构规划、多方案设计 | `doubao-seed-2.0-pro` | 复杂推理、结构设计 |
+| writer | 内容写作、章节填充 | `code` | 专注输出、性价比高 |
+| optimizer | 内容优化、表达精炼 | `doubao-seed-2.0-pro` | 复杂推理、文字优化 |
+| chart-designer | 图表代码生成 | `code` | 专注代码、效率高 |
+| formatter | 格式调整、LaTeX/Word 排版 | `code` | 重复性操作 |
+| reviewer | 质量审查、格式检查 | `doubao-seed-2.0-pro` | 逻辑分析、质量把关 |
+
+## 质量与准确性提升（v0.9 新增）
+
+### 真实性校验
+
+**数据核查**（Reviewer Agent 职责）：
+- 论文中的数据、统计结果、实验数据必须标注来源
+- 申报书中的市场规模、增长率等数据必须注明引用来源和调查方法
+- 无法核实的数据须标注"[数据待核实]"并说明数据来源意向
+
+**引用规范**：
+- 学术论文：按期刊要求（APA/GB/T 7714）自动格式化参考文献
+- 查新报告：使用国标格式，标注检索数据库名称和时间
+- 申报书：标注权威机构发布的数据来源
+
+### 完整性校验
+
+**拓扑依赖处理**（Planner/Optimizer 职责）：
+在写作开始前，Planner 输出文档结构拓扑图，明确章节间的依赖关系：
+
+```markdown
+## 文档拓扑
+
+A(摘要) → B(背景) → C(研究内容) → D(方法) → E(结果) → F(讨论) → G(结论)
+
+依赖关系：
+- A 依赖 B+C+D+E+F+G（从全文摘要）
+- B 独立
+- C 依赖 B（基于背景展开）
+- D 依赖 C（基于内容设计方法）
+- E 依赖 D（基于方法得出结果）
+- F 依赖 E（讨论结果）
+- G 依赖 B+C+D+E+F（总结全文）
+```
+
+Optimizer 在优化时检查拓扑顺序是否合理，提前发现章节顺序问题。
+
+### 可运行性校验
+
+**代码/算法文档**（Writer 职责）：
+- 代码示例必须可直接运行
+- 算法描述中的伪代码应与配套实现代码一致
+- 技术方案文档中的架构图应与文字描述对应
 
 ## 写作模式
 

@@ -2,6 +2,35 @@
 
 ## [Unreleased]
 
+## v0.9.0 — 2026-05-01
+
+### 新增
+- **写作知识库**：建立术语库/格式规范库/优秀案例库，持续积累领域知识和最佳实践
+- **知识库目录结构**：`references/terminology/`、`references/format_specs/`、`references/examples/`
+- **术语库 JSON**：学术论文术语库（academic.json）、商业文档术语库（business.json），含过渡词/正式表达/禁用词
+- **格式规范库**：academic_paper / project_proposal / novelty_report / business_plan / technical_doc 五类格式规范
+- **优秀案例库**：结构化存储高质量文档样本，带元数据（source/type/score/tags）
+- **知识库 Agent**：可选角色，负责整理和维护知识库内容
+- **知识库更新机制**：写作完成后归档优质表达，审查后存入优秀案例库
+- **references/index.md**：知识库总入口，含使用指南和贡献规范
+- `references/format_specs/index.md`：格式规范库入口
+- `references/terminology/academic.json`：学术论文术语库（过渡词/正式词汇/禁用词）
+- `references/terminology/business.json`：商业文档术语库
+
+### 新增：质量与准确性提升
+- **真实性校验**：数据核查、引用规范（GB/T 7714 / 国标查新格式）
+- **完整性校验**：文档拓扑依赖图，明确章节间的依赖关系
+- **可运行性校验**：代码示例可运行性、算法描述与实现一致性
+
+### 变更
+- SKILL.md：frontmatter 新增 `model` 差异化配置字段
+- SKILL.md frontmatter：`version: v0.8.0` → `"v0.9.0"`（修复格式，添加引号）
+- SKILL.md：新增"写作知识库"章节（含知识库结构/使用方式/知识库 Agent/模型选择）
+- SKILL.md：新增"质量与准确性提升"章节
+- SKILL.md Files 表新增 `references/` 知识库目录条目
+- version: v0.8.0 → v0.9.0
+- kind: skill
+
 ---
 
 ## v0.8.0 — 2026-05-01
