@@ -29,5 +29,11 @@ doc-writer/
 claude skill install https://github.com/Air-0000/doc-writer-skill
 ```
 
-## License
-MIT
+---
+
+## 相关仓库
+
+- **doc-writer**（本仓库）：https://github.com/Air-0000/doc-writer-skill
+- **code-dev-team**：https://github.com/Air-0000/code-dev-team-skill
+- **chat-history-sync**：https://github.com/Air-0000/chat-history-sync-skill
+- **skill-publisher**：https://github.com/Air-0000/skill-publisher
