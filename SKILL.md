@@ -1,6 +1,6 @@
 ---
 name: doc-writer
-version: "v3.3.0"
+version: v3.3.1
 description: |
   多智能体协同学术/商业文档写作技能，支持单轨/多轨并行/扩轨三种模式，可多支团队同时走不同方向并评选最优解。
   支持 LaTeX 和 Word 双格式输出。
